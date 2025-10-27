@@ -1,9 +1,13 @@
+using System.Runtime.CompilerServices;
 using CapstoneBackend.Auth.Models;
 
-namespace CapstoneBackend.Auth;
+[assembly:InternalsVisibleTo("DynamicProxyGenAssembly2")]
+[assembly:InternalsVisibleTo("CapstoneBackend.Test")]
 
+namespace CapstoneBackend.Auth;
 public interface IAuthRepository
 {
+    
     internal Task<ApiUser> Register(ApiUser databaseUser);
     internal Task<DatabaseUser?> GetUserByUsername(Login credentials);
 }

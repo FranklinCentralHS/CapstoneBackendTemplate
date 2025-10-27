@@ -1,9 +1,12 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Text;
 using CapstoneBackend.Auth.Models;
 using CapstoneBackend.Utilities;
 using Microsoft.IdentityModel.Tokens;
+
+[assembly:InternalsVisibleTo("CapstoneBackend.Test")]
 
 namespace CapstoneBackend.Auth;
 

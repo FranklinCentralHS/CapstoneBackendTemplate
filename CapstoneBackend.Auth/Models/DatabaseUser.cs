@@ -1,4 +1,7 @@
-﻿using Dapper.Contrib.Extensions;
+﻿using System.Runtime.CompilerServices;
+using Dapper.Contrib.Extensions;
+
+[assembly:InternalsVisibleTo("CapstoneBackend.Test")]
 
 namespace CapstoneBackend.Auth.Models;
 

@@ -1,6 +1,10 @@
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using CapstoneBackend.Utilities.Exceptions;
+
+
+[assembly:InternalsVisibleTo("CapstoneBackend.Test")]
 
 namespace CapstoneBackend.Auth;
 
