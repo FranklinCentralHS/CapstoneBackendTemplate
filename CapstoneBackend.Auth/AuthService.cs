@@ -8,10 +8,12 @@ namespace CapstoneBackend.Auth;
 public class AuthService : IAuthService
 {
     private readonly IAuthRepository _authRepository;
+    private readonly IAuthServiceWrapper _authServiceWrapper;
 
-    public AuthService(IAuthRepository authRepository)
+    public AuthService(IAuthRepository authRepository, IAuthServiceWrapper authServiceWrapper)
     {
         _authRepository = authRepository;
+        _authServiceWrapper = authServiceWrapper;
     }
 
     public Task<ApiUser> Register(ApiUser user)
@@ -35,9 +37,9 @@ public class AuthService : IAuthService
             throw new UnauthenticatedException($"No user found for ${credentials.Username}");
         if (user.IsDeleted)
             throw new UnauthenticatedException($"A login attempt was made for user {user.Id}, but user is inactive.");
-        if (!CryptographyUtility.VerifyPasswordHash(credentials.Password, user.PasswordHash, user.PasswordSalt))
+        if (!_authServiceWrapper.VerifyPasswordHash(credentials.Password, user.PasswordHash, user.PasswordSalt))
             throw new UnauthenticatedException($"A login attempt was made for user {user.Id}, but password was incorrect.");
-        var token = ClaimUtility.CreateToken(user);
+        var token = _authServiceWrapper.CreateToken(user);
 
         return new AuthToken
         {
