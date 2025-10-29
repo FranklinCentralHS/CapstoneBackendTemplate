@@ -39,7 +39,7 @@ public class TestController : Controller
             return StatusCode(501, "Environment variables not working.");
     }
 
-    [HttpGet("test/connectionstring")]
+    [HttpGet("test/databaseConnection")]
     public async Task<IActionResult> TestConnectionString()
     {
         _logger.LogInformation("connection string endpoint called");

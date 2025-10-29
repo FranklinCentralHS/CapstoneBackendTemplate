@@ -25,7 +25,8 @@ public class Startup
         services.AddControllers();
         
         services.AddScoped<DbConnectionTest>();
-        AuthSetup.AddAuth(services);
+        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); //needed to get user id from token
+        AuthSetup.AddAuth(services, _configuration);
     }
 
     //This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

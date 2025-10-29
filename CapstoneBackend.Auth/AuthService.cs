@@ -24,6 +24,10 @@ public class AuthService : IAuthService
         
         //TODO check if username or email is already taken
         
+        //set default values to prevent user overrides
+        user.Id = null;
+        user.CreateDatetime = DateTime.UtcNow;
+        
         return _authRepository.Register(user);
     }
 

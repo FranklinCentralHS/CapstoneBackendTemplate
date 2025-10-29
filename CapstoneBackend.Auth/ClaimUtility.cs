@@ -13,22 +13,25 @@ namespace CapstoneBackend.Auth;
 
 internal class ClaimUtility
 {
-    private static byte[] Key;
+    private static byte[] _key = null!;
+    private static IConfiguration _configuration = null!;
 
-    internal ClaimUtility(IConfiguration _configuration)
+    internal ClaimUtility(IConfiguration configuration)
     {
-        var keyString = _configuration.GetValue<string>(EnvironmentVariables.TOKEN_KEY)!;
-        Key = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable(EnvironmentVariables.TOKEN_KEY)!);
+        _configuration = configuration;
     }
     
     internal static string CreateToken(DatabaseUser user)
     {
+        var keyString = _configuration.GetValue<string>(EnvironmentVariables.TOKEN_KEY)!;
+        _key = Encoding.ASCII.GetBytes(keyString);
+        
         var tokenHandler = new JwtSecurityTokenHandler();
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(CreateClaims(user)),
             Expires = DateTime.Now.AddDays(1), // set how long until the user will need to login again
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Key), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_key), SecurityAlgorithms.HmacSha256Signature)
         };
         
         var token = tokenHandler.CreateToken(tokenDescriptor);

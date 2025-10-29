@@ -49,6 +49,6 @@ internal class AuthRepository : IAuthRepository
         var connectionString = _configuration.GetValue<string>(EnvironmentVariables.MYSQL_CONNECTION_STRING);
         await using var connection = new MySqlConnection(connectionString);
 
-        return await connection.QuerySingleOrDefaultAsync<DatabaseUser>(query);
+        return await connection.QuerySingleOrDefaultAsync<DatabaseUser>(query, new {username = credentials.Username});
     }
 }
