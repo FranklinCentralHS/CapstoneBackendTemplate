@@ -1,6 +1,5 @@
 ﻿using CapstoneBackend.Auth;
 using CapstoneBackend.Auth.Models;
-using CapstoneBackend.Utilities;
 using CapstoneBackend.Utilities.Exceptions;
 using Moq;
 
@@ -11,6 +10,7 @@ public class AuthServiceTests
     [Fact]
     public async Task Login_WhenCalledWithoutUsername_ThrowsBadRequest()
     {
+        //arrange
         var repo = new Mock<IAuthRepository>();
         var wrapper = new Mock<IAuthServiceWrapper>();
         var service = new AuthService(repo.Object, wrapper.Object);
@@ -20,15 +20,16 @@ public class AuthServiceTests
             Username = "",
             Password = "it's a secret"
         };
-
+        //act
         var test = async () => await service.Login(badLogin);
-
+        //assert
         await Assert.ThrowsAsync<BadRequestException>(test);
     }
     
     [Fact]
     public async Task Login_WhenCalledWithoutPassword_ThrowsBadRequest()
     {
+        //arrange
         var repo = new Mock<IAuthRepository>();
         var wrapper = new Mock<IAuthServiceWrapper>();
         var service = new AuthService(repo.Object, wrapper.Object);
@@ -38,15 +39,16 @@ public class AuthServiceTests
             Username = "myUsername",
             Password = ""
         };
-
+        //act
         var test = async () => await service.Login(badLogin);
-
+        //assert
         await Assert.ThrowsAsync<BadRequestException>(test);
     }
     
     [Fact]
     public async Task Login_UserDoesntExist_ThrowsUnauthenticated()
     {
+        //arrange
         var repo = new Mock<IAuthRepository>();
         repo.Setup(r => r.GetUserByUsername(It.IsAny<Login>()))
             .ReturnsAsync((DatabaseUser) null);
@@ -59,15 +61,16 @@ public class AuthServiceTests
             Username = "myUsername",
             Password = "it's a secret"
         };
-
+        //act
         var test = async () => await service.Login(badLogin);
-
+        //assert
         await Assert.ThrowsAsync<UnauthenticatedException>(test);
     }
     
     [Fact]
     public async Task Login_UserIsDeleted_ThrowsUnauthenticated()
     {
+        //arrange
         var repo = new Mock<IAuthRepository>();
         repo.Setup(r => r.GetUserByUsername(It.IsAny<Login>()))
             .ReturnsAsync(new DatabaseUser
@@ -83,15 +86,16 @@ public class AuthServiceTests
             Username = "myUsername",
             Password = "it's a secret"
         };
-
+        //act
         var test = async () => await service.Login(badLogin);
-
+        //assert
         await Assert.ThrowsAsync<UnauthenticatedException>(test);
     }
     
     [Fact]
     public async Task Login_UserPasswordIsWrong_ThrowsUnauthenticated()
     {
+        //arrange
         var repo = new Mock<IAuthRepository>();
         var wrapper = new Mock<IAuthServiceWrapper>();
         repo.Setup(r => r.GetUserByUsername(It.IsAny<Login>()))
@@ -111,15 +115,16 @@ public class AuthServiceTests
             Username = "myUsername",
             Password = "it's a secret"
         };
-
+        //act
         var test = async () => await service.Login(badLogin);
-
+        //assert
         await Assert.ThrowsAsync<UnauthenticatedException>(test);
     }
     
     [Fact]
     public async Task Login_IsSuccessful_ReturnsAuthToken()
     {
+        //arrange
         var hash = new byte[] { 1 };
         var salt = new byte[] { 2 };
             
@@ -143,9 +148,9 @@ public class AuthServiceTests
             Username = "myUsername",
             Password = "it's a secret"
         };
-
+        //act
         var test = await service.Login(badLogin);
-
+        //assert
         Assert.IsType<AuthToken>(test);
     }
 }
