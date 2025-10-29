@@ -51,7 +51,7 @@ public class AuthServiceTests
         //arrange
         var repo = new Mock<IAuthRepository>();
         repo.Setup(r => r.GetUserByUsername(It.IsAny<Login>()))
-            .ReturnsAsync((DatabaseUser) null);
+            .ReturnsAsync((DatabaseUser) null!);
         
         var wrapper = new Mock<IAuthServiceWrapper>();
         var service = new AuthService(repo.Object, wrapper.Object);

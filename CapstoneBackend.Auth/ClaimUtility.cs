@@ -4,15 +4,22 @@ using System.Security.Claims;
 using System.Text;
 using CapstoneBackend.Auth.Models;
 using CapstoneBackend.Utilities;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 [assembly:InternalsVisibleTo("CapstoneBackend.Test")]
 
 namespace CapstoneBackend.Auth;
 
-internal static class ClaimUtility
+internal class ClaimUtility
 {
-    private static readonly byte[] Key = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable(EnvironmentVariables.TOKEN_KEY)!);
+    private static byte[] Key;
+
+    internal ClaimUtility(IConfiguration _configuration)
+    {
+        var keyString = _configuration.GetValue<string>(EnvironmentVariables.TOKEN_KEY)!;
+        Key = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable(EnvironmentVariables.TOKEN_KEY)!);
+    }
     
     internal static string CreateToken(DatabaseUser user)
     {

@@ -31,8 +31,9 @@ public class TestController : Controller
     public IActionResult TestEnvironmentVariables()
     {
         _logger.LogInformation("environment variable endpoint called");
+        
         if (_configuration.GetValue<bool>(EnvironmentVariables.TRUE_TEST_KEY) &&
-            ! _configuration.GetValue<bool>(EnvironmentVariables.FALSE_TEST_KEY))
+            !_configuration.GetValue<bool>(EnvironmentVariables.FALSE_TEST_KEY))
             return Ok("Environment variables working.");
         else
             return StatusCode(501, "Environment variables not working.");
@@ -42,7 +43,6 @@ public class TestController : Controller
     public async Task<IActionResult> TestConnectionString()
     {
         _logger.LogInformation("connection string endpoint called");
-        var connectionString = Environment.GetEnvironmentVariable(EnvironmentVariables.MYSQL_CONNECTION_STRING);
         try
         {
             if (await _dbConnectionTest.TestConnection())

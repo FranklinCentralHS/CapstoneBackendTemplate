@@ -15,6 +15,13 @@ public class Startup
     //This method gets called by the runtime. Use this method to add services.
     public void ConfigureServices(IServiceCollection services)
     {
+        /* //Check what value providers are registered
+        foreach (var provider in ((IConfigurationRoot)_configuration).Providers.ToList())
+        {
+            Console.WriteLine(provider.ToString());
+        }
+        */
+        
         services.AddControllers();
         
         services.AddScoped<DbConnectionTest>();
