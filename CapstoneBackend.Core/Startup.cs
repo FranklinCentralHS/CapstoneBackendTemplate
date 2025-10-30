@@ -25,7 +25,6 @@ public class Startup
         services.AddControllers();
         
         services.AddScoped<DbConnectionTest>();
-        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); //needed to get user id from token
         AuthSetup.AddAuth(services, _configuration);
     }
 
@@ -40,13 +39,15 @@ public class Startup
         else //we're not doing anything fancy, so we can assume dev or 'prod' are the only choices here
         {
             app.UseHsts(); //OWASP says to use this
+            app.UseHttpsRedirection();
         }
 
-        app.UseHttpsRedirection();
         app.UseRouting();
         
         //oversimplified CORS policy to prevent headaches
         app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+        
+        app.UseAuthentication();
         
         //enables access to request bodies when logging
         app.Use((context, next) =>

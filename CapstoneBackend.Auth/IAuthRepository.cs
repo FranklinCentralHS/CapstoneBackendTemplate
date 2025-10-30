@@ -9,5 +9,6 @@ public interface IAuthRepository
 {
     
     internal Task<ApiUser> Register(ApiUser databaseUser);
-    internal Task<DatabaseUser?> GetUserByUsername(Login credentials);
+    internal Task<DatabaseUser?> GetUserByUsername(string username);
+    internal Task<DatabaseUser?> GetUserByEmail(string email);
 }

@@ -1,5 +1,7 @@
 using System.Collections;
+using CapstoneBackend.Auth;
 using CapstoneBackend.Utilities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CapstoneBackend.Core.Controllers;
@@ -9,15 +11,18 @@ public class TestController : Controller
     private readonly ILogger<TestController> _logger;
     private readonly IConfiguration _configuration;
     private readonly DbConnectionTest _dbConnectionTest;
+    private readonly IUserContext _userContext;
 
     public TestController(
         ILogger<TestController> logger,
         IConfiguration configuration,
-        DbConnectionTest dbConnectionTest)
+        DbConnectionTest dbConnectionTest,
+        IUserContext userContext)
     {
         _logger = logger;
         _configuration = configuration;
         _dbConnectionTest = dbConnectionTest;
+        _userContext = userContext;
     }
 
     [HttpGet("test/online")]
@@ -53,6 +58,24 @@ public class TestController : Controller
         catch
         {
             return StatusCode(501, "Database connection not working.");
+        }
+    }
+    
+    [HttpGet("test/authentication")]
+    [Authorize]
+    public IActionResult TestAuth()
+    {
+        _logger.LogInformation("authentication test called");
+        try
+        {
+            if (_userContext.IsAuthenticated())
+                return Ok($"Auth is working. User id is {_userContext.GetUserId()}");
+            else
+                return StatusCode(501, "Auth not working.");
+        }
+        catch
+        {
+            return StatusCode(501, "Auth not working.");
         }
     }
 }

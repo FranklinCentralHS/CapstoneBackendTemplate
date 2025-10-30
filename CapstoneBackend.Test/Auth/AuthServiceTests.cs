@@ -50,7 +50,7 @@ public class AuthServiceTests
     {
         //arrange
         var repo = new Mock<IAuthRepository>();
-        repo.Setup(r => r.GetUserByUsername(It.IsAny<Login>()))
+        repo.Setup(r => r.GetUserByUsername(It.IsAny<string>()))
             .ReturnsAsync((DatabaseUser) null!);
         
         var wrapper = new Mock<IAuthServiceWrapper>();
@@ -72,7 +72,7 @@ public class AuthServiceTests
     {
         //arrange
         var repo = new Mock<IAuthRepository>();
-        repo.Setup(r => r.GetUserByUsername(It.IsAny<Login>()))
+        repo.Setup(r => r.GetUserByUsername(It.IsAny<string>()))
             .ReturnsAsync(new DatabaseUser
             {
                 IsDeleted = true
@@ -98,7 +98,7 @@ public class AuthServiceTests
         //arrange
         var repo = new Mock<IAuthRepository>();
         var wrapper = new Mock<IAuthServiceWrapper>();
-        repo.Setup(r => r.GetUserByUsername(It.IsAny<Login>()))
+        repo.Setup(r => r.GetUserByUsername(It.IsAny<string>()))
             .ReturnsAsync(new DatabaseUser
             {
                 IsDeleted = false,
@@ -129,7 +129,7 @@ public class AuthServiceTests
         var salt = new byte[] { 2 };
             
         var repo = new Mock<IAuthRepository>();
-        repo.Setup(r => r.GetUserByUsername(It.IsAny<Login>()))
+        repo.Setup(r => r.GetUserByUsername(It.IsAny<string>()))
             .ReturnsAsync(new DatabaseUser
             {
                 IsDeleted = false,

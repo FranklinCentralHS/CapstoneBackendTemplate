@@ -10,6 +10,10 @@ public class AuthService : IAuthService
     private readonly IAuthRepository _authRepository;
     private readonly IAuthServiceWrapper _authServiceWrapper;
 
+    private const string GenericEmailMessage =
+        "There was an error processing the provided email address. Please examine the provided value and try again.";
+    
+    
     public AuthService(IAuthRepository authRepository, IAuthServiceWrapper authServiceWrapper)
     {
         _authRepository = authRepository;
@@ -21,8 +25,7 @@ public class AuthService : IAuthService
         ValidateUsername(user.Username);
         ValidateEmail(user.EmailAddress);
         ValidatePassword(user.Password);
-        
-        //TODO check if username or email is already taken
+        ValidateNoCollisions(user);
         
         //set default values to prevent user overrides
         user.Id = null;
@@ -36,7 +39,7 @@ public class AuthService : IAuthService
         ValidateUsername(credentials.Username);
         ValidatePassword(credentials.Password);
         
-        var user = await _authRepository.GetUserByUsername(credentials);
+        var user = await _authRepository.GetUserByUsername(credentials.Username);
         if (user == null)
             throw new UnauthenticatedException($"No user found for ${credentials.Username}");
         if (user.IsDeleted)
@@ -98,7 +101,7 @@ public class AuthService : IAuthService
         {
             throw new BadRequestException("Email regex timed out", ex)
             {
-                ClientMessage = "There was an error processing the provided email address. Please examine the provided value and try again."
+                ClientMessage = GenericEmailMessage
             };
         }
         catch (ArgumentException ex)
@@ -118,5 +121,22 @@ public class AuthService : IAuthService
                 ClientMessage = "Please provide a password and try again."
             };
         //TODO add more password validation?
+    }
+
+    private void ValidateNoCollisions(ApiUser user)
+    {
+        var emailUser = _authRepository.GetUserByEmail(user.EmailAddress);
+        // just give a general error. do not reveal that the email is already in the db
+        if (emailUser != null) throw new BadRequestException("Email address already exists")
+        {
+            ClientMessage = GenericEmailMessage
+        };
+        
+        var usernameUser = _authRepository.GetUserByUsername(user.Username);
+        // see comment above
+        if (usernameUser != null) throw new BadRequestException("Username address already exists")
+        {
+            ClientMessage = "Username is not available." //consider whether to use a more generic message
+        };
     }
 }

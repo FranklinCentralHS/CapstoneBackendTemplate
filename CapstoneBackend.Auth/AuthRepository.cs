@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MySqlConnector;
 
+
 namespace CapstoneBackend.Auth;
 
 internal class AuthRepository : IAuthRepository
@@ -20,6 +21,7 @@ internal class AuthRepository : IAuthRepository
     
     async Task<ApiUser> IAuthRepository.Register(ApiUser user)
     {
+        //move this to service?
         CryptographyUtility.CreatePasswordHash(user.Password, out var hash, out var salt);
 
         var dbUser = new DatabaseUser
@@ -42,13 +44,22 @@ internal class AuthRepository : IAuthRepository
         return user;
     }
 
-    async Task<DatabaseUser?> IAuthRepository.GetUserByUsername(Login credentials)
+    async Task<DatabaseUser?> IAuthRepository.GetUserByUsername(string username)
     {
         var query = "SELECT * FROM `Users` WHERE `Username` = @username";
         
         var connectionString = _configuration.GetValue<string>(EnvironmentVariables.MYSQL_CONNECTION_STRING);
         await using var connection = new MySqlConnection(connectionString);
 
-        return await connection.QuerySingleOrDefaultAsync<DatabaseUser>(query, new {username = credentials.Username});
+        return await connection.QuerySingleOrDefaultAsync<DatabaseUser>(query, new {username = username});
+    }
+    async Task<DatabaseUser?> IAuthRepository.GetUserByEmail(string email)
+    {
+        var query = "SELECT * FROM `Users` WHERE `EmailAddress` = @email";
+        
+        var connectionString = _configuration.GetValue<string>(EnvironmentVariables.MYSQL_CONNECTION_STRING);
+        await using var connection = new MySqlConnection(connectionString);
+
+        return await connection.QuerySingleOrDefaultAsync<DatabaseUser>(query, new {email = email});
     }
 }

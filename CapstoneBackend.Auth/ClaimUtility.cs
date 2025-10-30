@@ -23,6 +23,7 @@ internal class ClaimUtility
     
     internal static string CreateToken(DatabaseUser user)
     {
+        //TODO should almost certainly be different from the key used to encrypt passwords
         var keyString = _configuration.GetValue<string>(EnvironmentVariables.TOKEN_KEY)!;
         _key = Encoding.ASCII.GetBytes(keyString);
         
@@ -42,7 +43,8 @@ internal class ClaimUtility
     {
         //making it a list in case I need to add roles or permissions later
         var result = new List<Claim> {
-            new (ClaimTypes.Name, user.Id.ToString()),
+            new (ClaimTypes.Actor, user.Id.ToString()),
+            new (ClaimTypes.Name, user.Username),
             new (ClaimTypes.Email, user.EmailAddress)
         };
             

@@ -1,6 +1,7 @@
 using System.Net.Mime;
 using CapstoneBackend.Auth;
 using CapstoneBackend.Auth.Models;
+using CapstoneBackend.Utilities.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +33,11 @@ public class AuthController : Controller
             newUser.Password = ""; //don't send the password back in plain text
             return Ok(newUser);
         }
+        catch (BaseCapstoneException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            return ex.ReturnDefaultResponse();
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
@@ -43,12 +49,17 @@ public class AuthController : Controller
     [Route("login")]
     [AllowAnonymous]
     [Consumes(MediaTypeNames.Application.Json)]
-    public async Task<IActionResult> Register([FromBody] Login user)
+    public async Task<IActionResult> Login([FromBody] Login user)
     {
         try
         {
             var token = await _authService.Login(user);
             return Ok(token);
+        }
+        catch (BaseCapstoneException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            return ex.ReturnDefaultResponse();
         }
         catch (Exception ex)
         {
